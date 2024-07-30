@@ -55,3 +55,59 @@ export default ResponsiveTabs;
 
 
 ```
+
+```jsx
+import type { BoxProps } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+
+interface Props extends BoxProps {
+  children: React.ReactNode;
+  noOfLines: number;
+}
+
+export const ExpandableText = forwardRef<HTMLDivElement, Props>(
+  ({ children, noOfLines, ...rest }, ref) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isTextClamped, setIsTextClamped] = useState(false);
+    const inputRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (inputRef.current) {
+        const isClamped =
+          inputRef.current.scrollHeight > inputRef.current.clientHeight;
+        setIsTextClamped(isClamped);
+      }
+    }, [isExpanded, children, noOfLines]);
+
+    const handleToggle = () => {
+      setIsExpanded(!isExpanded);
+    };
+
+    return (
+      <Box ref={ref} {...rest}>
+        <Box
+          ref={inputRef}
+          noOfLines={!isExpanded ? noOfLines : undefined}
+          overflow="hidden"
+          sx={{
+            display: '-webkit-box',
+            WebkitLineClamp: !isExpanded ? noOfLines : 'unset',
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
+          {children}
+        </Box>
+        {isTextClamped && (
+          <Button size="sm" variant="link" onClick={handleToggle}>
+            <Text>{isExpanded ? 'Show less' : 'Read more'}</Text>
+          </Button>
+        )}
+      </Box>
+    );
+  }
+);
+
+ExpandableText.displayName = 'ExpandableText';
+
+```
