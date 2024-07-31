@@ -111,3 +111,24 @@ export const ExpandableText = forwardRef<HTMLDivElement, Props>(
 ExpandableText.displayName = 'ExpandableText';
 
 ```
+
+```sh
+#!/bin/sh
+# Fetch all branches and tags
+git fetch origin +refs/heads/*:refs/remotes/origin/*
+
+# Determine the common ancestor between the main branch and the current branch
+BASE_COMMIT=$(git merge-base origin/main HEAD)
+
+# Run nx affected:build
+npx nx affected:build --base=$BASE_COMMIT --head=HEAD
+
+# Optionally, you can also add other nx affected commands like test or lint
+# npx nx affected:test --base=$BASE_COMMIT --head=HEAD
+# npx nx affected:lint --base=$BASE_COMMIT --head=HEAD
+
+
+#
+chmod +x scripts/pre-push.sh
+
+```
