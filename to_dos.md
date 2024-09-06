@@ -132,3 +132,5 @@ npx nx affected:build --base=$BASE_COMMIT --head=HEAD
 chmod +x scripts/pre-push.sh
 
 ```
+
+https://codesandbox.io/p/sandbox/divine-snow-9q559t?file=%2Fsrc%2FCalendarGrid.js%3A9%2C47
