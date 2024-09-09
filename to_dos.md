@@ -133,4 +133,56 @@ chmod +x scripts/pre-push.sh
 
 ```
 
+```jsx
+import { useState, useEffect } from 'react';
+
+function useLocalStorage(key, initialValue) {
+  // Get the value from localStorage or use the initial value if not available
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.warn('Error reading localStorage', error);
+      return initialValue;
+    }
+  });
+
+  // Save the new value in both the state and localStorage
+  const setValue = (value) => {
+    try {
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.warn('Error setting localStorage', error);
+    }
+  };
+
+  // Effect to keep state and localStorage in sync when the key changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const newValue = localStorage.getItem(key);
+        setStoredValue(newValue ? JSON.parse(newValue) : initialValue);
+      } catch (error) {
+        console.warn('Error syncing with localStorage', error);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [key, initialValue]);
+
+  return [storedValue, setValue];
+}
+
+export default useLocalStorage;
+
+```
+
 https://codesandbox.io/p/sandbox/divine-snow-9q559t?file=%2Fsrc%2FCalendarGrid.js%3A9%2C47
